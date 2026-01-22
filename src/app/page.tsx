@@ -42,30 +42,12 @@ export default function Home() {
       {
         id: 1,
         name: "To Do",
-        cards: [
-          {
-            id: 1,
-            title: "Design login page",
-            priority: "high",
-            description: "Create wireframe and final UI",
-            dueDate: "2026-01-28",
-            labels: ["ui", "design"],
-          },
-        ],
+        cards: [],
       },
       {
         id: 2,
         name: "In Progress",
-        cards: [
-          {
-            id: 2,
-            title: "Implement auth flow",
-            priority: "medium",
-            description: "JWT + refresh tokens",
-            dueDate: "2026-01-25",
-            labels: ["backend", "auth"],
-          },
-        ],
+        cards: [],
       },
       { id: 3, name: "Done", cards: [] },
     ],
