@@ -23,6 +23,8 @@ type BoardProps = {
     toColumnId: number,
     cardId: number,
   ) => void;
+  onDeleteColumn: (columnId: number) => void;
+  onRenameColumn: (columnId: number, newName: string) => void;
 };
 
 export default function Board({
@@ -30,6 +32,8 @@ export default function Board({
   onAddCard,
   onDeleteCard,
   onMoveCard,
+  onDeleteColumn,
+  onRenameColumn,
 }: BoardProps) {
   return (
     <div className="board-container" id="boardContainer">
@@ -41,8 +45,28 @@ export default function Board({
             </div>
             <div className="column-count">{column.cards.length}</div>
             <div className="column-actions">
-              <button>✏️</button>
-              <button>🗑️</button>
+              <button
+                onClick={() => {
+                  const name = prompt("Rename column:", column.name);
+                  if (name != null) onRenameColumn(column.id, name);
+                }}
+              >
+                ✏️
+              </button>
+
+              <button
+                onClick={() => {
+                  if (
+                    confirm(
+                      `Delete column "${column.name}"? This removes all cards inside.`,
+                    )
+                  ) {
+                    onDeleteColumn(column.id);
+                  }
+                }}
+              >
+                🗑️
+              </button>
             </div>
           </div>
 

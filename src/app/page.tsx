@@ -4,6 +4,7 @@ import React from "react";
 import AddCard from "./components/home/AddCard";
 import Board from "./components/home/Board";
 import Header from "./components/layout/Header";
+import AddColumn from "./components/home/AddColumn";
 
 type Priority = "low" | "medium" | "high";
 
@@ -30,6 +31,9 @@ type BoardState = {
 
 export default function Home() {
   const [cardModalOpen, setCardModalOpen] = React.useState<boolean>(false);
+  const [columnModalOpen, setColumnModalOpen] = React.useState(false);
+  const [newColumnName, setNewColumnName] = React.useState("");
+
   const [targetColumnId, setTargetColumnId] = React.useState<number | null>(
     null,
   );
@@ -134,40 +138,78 @@ export default function Home() {
   }
 
   function moveCard(fromColumnId: number, toColumnId: number, cardId: number) {
-  if (fromColumnId === toColumnId) return;
+    if (fromColumnId === toColumnId) return;
 
-  setBoard((prev) => {
-    let movedCard: Card | null = null;
+    setBoard((prev) => {
+      let movedCard: Card | null = null;
 
-    const columnsAfterRemove = prev.columns.map((col) => {
-      if (col.id !== fromColumnId) return col;
+      const columnsAfterRemove = prev.columns.map((col) => {
+        if (col.id !== fromColumnId) return col;
 
-      const remaining = col.cards.filter((c) => {
-        if (c.id === cardId) {
-          movedCard = c;
-          return false;
-        }
-        return true;
+        const remaining = col.cards.filter((c) => {
+          if (c.id === cardId) {
+            movedCard = c;
+            return false;
+          }
+          return true;
+        });
+
+        return { ...col, cards: remaining };
       });
 
-      return { ...col, cards: remaining };
+      if (!movedCard) return prev;
+
+      const columnsAfterAdd = columnsAfterRemove.map((col) => {
+        if (col.id !== toColumnId) return col;
+        return { ...col, cards: [...col.cards, movedCard!] };
+      });
+
+      return { ...prev, columns: columnsAfterAdd };
     });
+  }
 
-    if (!movedCard) return prev;
+  function handleSaveColumn() {
+    if (!newColumnName.trim()) return;
 
-    const columnsAfterAdd = columnsAfterRemove.map((col) => {
-      if (col.id !== toColumnId) return col;
-      return { ...col, cards: [...col.cards, movedCard!] };
-    });
+    setBoard((prev) => ({
+      ...prev,
+      nextColumnId: prev.nextColumnId + 1,
+      columns: [
+        ...prev.columns,
+        {
+          id: prev.nextColumnId,
+          name: newColumnName.trim(),
+          cards: [],
+        },
+      ],
+    }));
 
-    return { ...prev, columns: columnsAfterAdd };
-  });
-}
+    setNewColumnName("");
+  }
 
+  function handleDeleteColumn(columnId: number) {
+    setBoard((prev) => ({
+      ...prev,
+      columns: prev.columns.filter((c) => c.id !== columnId),
+    }));
+  }
+
+  function handleRenameColumn(columnId: number, newName: string) {
+    const name = newName.trim();
+    if (!name) return;
+
+    setBoard((prev) => ({
+      ...prev,
+      columns: prev.columns.map((col) =>
+        col.id === columnId ? { ...col, name } : col,
+      ),
+    }));
+  }
 
   return (
     <>
-      <Header />
+      <Header onAddColumn={() => setColumnModalOpen(true)} />
+
       <Board
         board={board}
         onAddCard={(columnId) => {
@@ -176,6 +218,8 @@ export default function Home() {
         }}
         onDeleteCard={handleDeleteCard}
         onMoveCard={moveCard}
+        onDeleteColumn={handleDeleteColumn}
+        onRenameColumn={handleRenameColumn}
       />
 
       {cardModalOpen && (
@@ -184,6 +228,15 @@ export default function Home() {
           newCard={newCard}
           setNewCard={setNewCard}
           onSave={handleSaveCard}
+        />
+      )}
+
+      {columnModalOpen && (
+        <AddColumn
+          setColumnModalOpen={setColumnModalOpen}
+          newColumnName={newColumnName}
+          setNewColumnName={setNewColumnName}
+          onSave={handleSaveColumn}
         />
       )}
 

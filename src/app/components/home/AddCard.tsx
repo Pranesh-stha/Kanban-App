@@ -104,14 +104,13 @@ export default function AddCard({
         </div>
         <div className="modal-actions">
           <button
-            className="btn btn-secondary"
+            className="btn btn-danger btn-small"
+            id="deleteCardBtn"
             onClick={() => setCardModalOpen(false)}
           >
             Cancel
           </button>
-          <button className="btn btn-danger btn-small" id="deleteCardBtn">
-            Delete
-          </button>
+
           <button className="btn btn-primary" onClick={handleSave}>
             Save
           </button>
