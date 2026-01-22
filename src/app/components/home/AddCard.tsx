@@ -1,6 +1,6 @@
 type CardProps = {
   setCardModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  newCard?: {
+  newCard: {
     title: string;
     description: string;
     priority: string;
@@ -16,12 +16,14 @@ type CardProps = {
       labels: string;
     }>
   >;
+  onSave: () => void;
 };
 
 export default function AddCard({
   setCardModalOpen,
   newCard,
   setNewCard,
+  onSave,
 }: CardProps) {
   function handleInputChange(
     event: React.ChangeEvent<
@@ -40,7 +42,7 @@ export default function AddCard({
   }
 
   function handleSave() {
-    console.log("Saving card:", newCard);
+    onSave();
     setCardModalOpen(false);
   }
 

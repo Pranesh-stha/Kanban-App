@@ -1,84 +1,30 @@
 "use client";
 import React from "react";
 
-type BoardProps={
-  setCardModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
+type BoardProps = {
+  board: {
+    columns: {
+      id: number;
+      name: string;
+      cards: {
+        id: number;
+        title: string;
+        priority: "low" | "medium" | "high";
+        description?: string;
+        dueDate?: string;
+        labels?: string[];
+      }[];
+    }[];
+  };
+  onAddCard: (columnId: number) => void;
+  onDeleteCard: (columnId: number, cardId: number) => void;
+};
 
-export default function Board({ setCardModalOpen }: BoardProps) {
-  type Priority = "low" | "medium" | "high";
-
-  interface Card {
-    id: number;
-    title: string;
-    priority: Priority;
-    description?: string;
-    dueDate?: string;
-    labels?: string[];
-  }
-
-  interface Column {
-    id: number;
-    name: string;
-    cards: Card[];
-  }
-
-  interface Board {
-    columns: Column[];
-    nextColumnId: number;
-    nextCardId: number;
-  }
-
-  const [initialBoard, setInitialBoard] = React.useState<Board>({
-    columns: [
-      {
-        id: 1,
-        name: "To Do",
-        cards: [
-          {
-            id: 1,
-            title: "Design login page",
-            priority: "high",
-            description: "Create wireframe and final UI",
-            dueDate: "2026-01-28",
-            labels: ["ui", "design"],
-          },
-        ],
-      },
-      {
-        id: 2,
-        name: "In Progress",
-        cards: [
-          {
-            id: 2,
-            title: "Implement auth flow",
-            priority: "medium",
-            description: "JWT + refresh tokens",
-            dueDate: "2026-01-25",
-            labels: ["backend", "auth"],
-          },
-          {
-            id: 3,
-            title: "Implement pranesh flow",
-            priority: "medium",
-            description: "JWT + refresh tokens",
-            dueDate: "2026-01-25",
-            labels: ["backend", "auth"],
-          },
-        ],
-      },
-    ],
-    nextColumnId: 4,
-    nextCardId: 4,
-  });
-
-  const board: Board = initialBoard;
-
+export default function Board({ board, onAddCard, onDeleteCard }: BoardProps) {
   return (
     <div className="board-container" id="boardContainer">
       {board.columns.map((column) => (
         <div key={column.id} className="column" data-column-id={column.id}>
-          {/* Column Header */}
           <div className="column-header">
             <div style={{ flex: 1 }}>
               <div className="column-title">{column.name}</div>
@@ -90,7 +36,6 @@ export default function Board({ setCardModalOpen }: BoardProps) {
             </div>
           </div>
 
-          {/* Cards */}
           <div className="cards-container" data-column-id={column.id}>
             {column.cards.map((card) => (
               <div
@@ -128,12 +73,24 @@ export default function Board({ setCardModalOpen }: BoardProps) {
                 </div>
 
                 <div className="card-actions">
-                  <button>Edit</button>
+                  <button
+                    onClick={() => {
+                      if (confirm("Delete this card?"))
+                        onDeleteCard(column.id, card.id);
+                    }}
+                  >
+                    ❌ Delete
+                  </button>
                 </div>
               </div>
             ))}
 
-            <button className="add-card-btn" onClick={()=>setCardModalOpen(true)}>+ Add Task</button>
+            <button
+              className="add-card-btn"
+              onClick={() => onAddCard(column.id)}
+            >
+              + Add Task
+            </button>
           </div>
         </div>
       ))}
