@@ -1,36 +1,160 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📋 Kanban App (Next.js + TypeScript)
 
-## Getting Started
+A simple, **client-side Kanban board** where you can create columns and tasks, then **drag & drop** tasks between columns to track progress. 🚀
 
-First, run the development server:
+---
+
+## ✨ Features
+
+- ➕ **Add Columns** (e.g., To Do / In Progress / Done)
+- ✏️ **Rename Columns** (prompt-based rename)
+- 🗑️ **Delete Columns** (with confirmation — removes all cards inside)
+- ✅ **Add Tasks / Cards** with:
+  - 📝 Title
+  - 📌 Priority (Low / Medium / High)
+  - 🗓️ Due date
+  - 🏷️ Labels (comma-separated)
+  - 📄 Optional description
+- ❌ **Delete Tasks** (with confirmation)
+- 🧲 **Drag & Drop** cards between columns (HTML5 drag events)
+- 🎨 Styled with a custom CSS theme in `globals.css`
+
+> Note: This app stores data **in React state only** (no database / localStorage yet). Refreshing the page will reset the board.
+
+---
+
+## 🧰 Tech Stack
+
+- ⚡ **Next.js (App Router)** — `src/app/*`
+- ⚛️ **React** — client components + `useState`
+- 🟦 **TypeScript** — typed cards/columns/board state
+- 🎨 **CSS** — custom styles in `src/app/globals.css`
+- 🧩 **HTML5 Drag & Drop API** — move cards across columns
+
+---
+
+## 🗂️ Folder Structure
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+src/
+└── app/
+    ├── components/
+    │   ├── home/
+    │   │   ├── AddCard.tsx       # “Add Task” modal
+    │   │   ├── AddColumn.tsx     # “Add Column” modal
+    │   │   └── Board.tsx         # Board UI + drag & drop + card rendering
+    │   └── layout/
+    │       └── Header.tsx        # Top header + “Add Column” button
+    ├── favicon.ico
+    ├── globals.css               # App styling/theme
+    ├── layout.tsx                # Root layout + metadata
+    └── page.tsx                  # Main page: board state + handlers + modals
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### ✅ Prerequisites
+- **Node.js 18+** (recommended)
+- npm / yarn / pnpm (any one)
 
-## Learn More
+### 📦 Install
+From the project root (where your `package.json` is):
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### ▶️ Run (Dev)
+```bash
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Now open:
+- `http://localhost:3000`
 
-## Deploy on Vercel
+### 🏗️ Build & Start (Production)
+```bash
+npm run build
+npm run start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🕹️ How to Use
+
+1. **Add a column**  
+   Click **+ Add Column** in the header ➜ type a name ➜ **Save**.
+
+2. **Add a task**  
+   Inside a column, click **+ Add Task** ➜ fill in details ➜ **Save**.
+
+3. **Move tasks**  
+   Drag a card and drop it into another column. ✨
+
+4. **Rename a column**  
+   Click **✏️** on the column header, type a new name in the prompt, and confirm.
+
+5. **Delete a card / column**  
+   Use **❌ Delete** on a card or **🗑️** on the column header (both confirm first).
+
+---
+
+## 🔧 Customization
+
+### Change the default columns
+Edit the initial state in:
+
+- `src/app/page.tsx` → `useState({ columns: [...] })`
+
+Example:
+```ts
+columns: [
+  { id: 1, name: "Backlog", cards: [] },
+  { id: 2, name: "Doing", cards: [] },
+  { id: 3, name: "Review", cards: [] },
+  { id: 4, name: "Done", cards: [] },
+]
+```
+
+### Update styles
+All styling lives here:
+- `src/app/globals.css`
+
+---
+
+## 🧠 Implementation Notes (Quick)
+
+- The board is stored in a single React state object: `board`
+- Cards are moved via **HTML5 drag events**:
+  - `onDragStart` saves `{ fromColumnId, cardId }` into `dataTransfer`
+  - `onDrop` reads that payload and calls `onMoveCard(...)`
+
+---
+
+## 🛣️ Roadmap Ideas (Optional)
+
+If you want to level it up later:
+
+- 💾 Persist board to **localStorage**
+- 🗄️ Add a backend (Next.js API routes) + database (SQLite / Prisma)
+- 🔎 Search & filters (by label/priority/due date)
+- 👤 Auth + multiple boards
+- 📱 Better mobile drag support
+
+---
+
+## 🤝 Contributing
+
+PRs are welcome!  
+Ideas:
+- improve accessibility (keyboard support)
+- add persistence
+- add card editing
+
+---
+
+## 📄 License
+
+Add your preferred license here (MIT is common). ✅
