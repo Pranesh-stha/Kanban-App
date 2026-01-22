@@ -18,9 +18,19 @@ type BoardProps = {
   };
   onAddCard: (columnId: number) => void;
   onDeleteCard: (columnId: number, cardId: number) => void;
+  onMoveCard: (
+    fromColumnId: number,
+    toColumnId: number,
+    cardId: number,
+  ) => void;
 };
 
-export default function Board({ board, onAddCard, onDeleteCard }: BoardProps) {
+export default function Board({
+  board,
+  onAddCard,
+  onDeleteCard,
+  onMoveCard,
+}: BoardProps) {
   return (
     <div className="board-container" id="boardContainer">
       {board.columns.map((column) => (
@@ -36,7 +46,22 @@ export default function Board({ board, onAddCard, onDeleteCard }: BoardProps) {
             </div>
           </div>
 
-          <div className="cards-container" data-column-id={column.id}>
+          <div
+            className="cards-container"
+            data-column-id={column.id}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              const raw = e.dataTransfer.getData("text/plain");
+              if (!raw) return;
+
+              const data = JSON.parse(raw) as {
+                fromColumnId: number;
+                cardId: number;
+              };
+              onMoveCard(data.fromColumnId, column.id, data.cardId);
+            }}
+          >
             {column.cards.map((card) => (
               <div
                 key={card.id}
@@ -44,6 +69,15 @@ export default function Board({ board, onAddCard, onDeleteCard }: BoardProps) {
                 draggable
                 data-card-id={card.id}
                 data-column-id={column.id}
+                onDragStart={(e) => {
+                  e.dataTransfer.setData(
+                    "text/plain",
+                    JSON.stringify({
+                      fromColumnId: column.id,
+                      cardId: card.id,
+                    }),
+                  );
+                }}
               >
                 <div className="card-header">
                   <div className="card-title">{card.title}</div>

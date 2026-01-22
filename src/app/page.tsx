@@ -133,7 +133,37 @@ export default function Home() {
     }));
   }
 
-  
+  function moveCard(fromColumnId: number, toColumnId: number, cardId: number) {
+  if (fromColumnId === toColumnId) return;
+
+  setBoard((prev) => {
+    let movedCard: Card | null = null;
+
+    const columnsAfterRemove = prev.columns.map((col) => {
+      if (col.id !== fromColumnId) return col;
+
+      const remaining = col.cards.filter((c) => {
+        if (c.id === cardId) {
+          movedCard = c;
+          return false;
+        }
+        return true;
+      });
+
+      return { ...col, cards: remaining };
+    });
+
+    if (!movedCard) return prev;
+
+    const columnsAfterAdd = columnsAfterRemove.map((col) => {
+      if (col.id !== toColumnId) return col;
+      return { ...col, cards: [...col.cards, movedCard!] };
+    });
+
+    return { ...prev, columns: columnsAfterAdd };
+  });
+}
+
 
   return (
     <>
@@ -145,6 +175,7 @@ export default function Home() {
           setCardModalOpen(true);
         }}
         onDeleteCard={handleDeleteCard}
+        onMoveCard={moveCard}
       />
 
       {cardModalOpen && (
