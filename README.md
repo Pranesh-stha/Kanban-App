@@ -145,16 +145,4 @@ If you want to level it up later:
 
 ---
 
-## 🤝 Contributing
 
-PRs are welcome!  
-Ideas:
-- improve accessibility (keyboard support)
-- add persistence
-- add card editing
-
----
-
-## 📄 License
-
-Add your preferred license here (MIT is common). ✅
